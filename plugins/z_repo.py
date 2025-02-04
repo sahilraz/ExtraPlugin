@@ -30,22 +30,21 @@ async def start(_, msg):
           InlineKeyboardButton("ᴀᴅᴅ ᴍᴇ", url=f"https://t.me/{app.username}?startgroup=true")
         ],
         [
-          InlineKeyboardButton("ᴄʜᴧᴍᴘᴜ", url="https://t.me/Shahil440"),
-          InlineKeyboardButton("sʜɪᴠᴀɴsʜᴜ", url="https://t.me/TheShivanshu"),
+          InlineKeyboardButton("Shahil", url="https://t.me/Shahil440"),
+          InlineKeyboardButton("𓆩 ˹𝖲𝗁𝖺𝗁𝗂𝗅 ✘ 𝖡𝗈𝗍𝗌˼ 𓆪", url="https://t.me/ShahilBotsList),
           ],
                [
                 InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/shahil440"),
 
 ],[
-              InlineKeyboardButton("ᴍᴜsɪᴄ", url=f"https://github.com/Shahil440/ChampuMusic"),
-              InlineKeyboardButton("sᴛʀɪɴɢ", url=f"https://github.com/Shahil440/ChampuString"),
+              InlineKeyboardButton("ᴍᴜsɪᴄ", url=f"https://github.com/Shahilali5/ShahilxMusic"),
+              InlineKeyboardButton("ՏTᖇIᑎᘜ ᙭ ᕼᗩᑕKᗴᖇ 🧑🏻‍💻", url=f"https://github.com/Shahilali5/STRING-HACK"),
               ],
 [
-              InlineKeyboardButton("sɪᴍᴘʟᴇ ᴍᴜsɪᴄ", url=f"https://github.com/Shahil440/TelegramMusicBot")
+              InlineKeyboardButton("𓆩˹𝖴𝗇𝗄𝗇𝗈𝗐𝗇 ✘ ChatBot˼ 𓆪", url=f"https://github.com/Shahil440/CHATBOTV2")
               ],
               [
-              InlineKeyboardButton("ᴍᴀɴᴀɢᴍᴇɴᴛ", url=f"https://github.com/Shahil440/ChampuManagment"),
-InlineKeyboardButton("ᴄʜᴀᴛʙᴏᴛ", url=f"https://github.com/Shahil440/ChatBot"),
+              InlineKeyboardButton("ᴍᴀɴᴀɢᴍᴇɴᴛ", url=f"https://github.com/Shahilali5/ShahilxMange")
 ]]
     
     reply_markup = InlineKeyboardMarkup(buttons)
