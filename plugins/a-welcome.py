@@ -2,119 +2,146 @@ import random
 import asyncio
 import time
 from logging import getLogger
-from time import time
+from pyrogram import enums, filters, Client
+from pyrogram.types import ChatMemberUpdated, Message
 
-from pyrogram import enums, filters
-from pyrogram.types import ChatMemberUpdated
-
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import InviteRequestSent
 from ChampuMusic import app
 from ChampuMusic.utils.database import get_assistant
 from pymongo import MongoClient
 from config import MONGO_DB_URI
 
-# Define a dictionary to track the last message timestamp for each user
-user_last_message_time = {}
-user_command_count = {}
-# Define the threshold for command spamming (e.g., 20 commands within 60 seconds)
-SPAM_THRESHOLD = 2
-SPAM_WINDOW_SECONDS = 5
-
 LOGGER = getLogger(__name__)
 
-champu = ["ʜᴇʏ", "ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ?", "ʜᴇʟʟᴏ", "ʜɪ", "ᴋᴀɪsᴇ ʜᴏ?", "ᴡᴇʟᴄᴏᴍᴇ ᴊɪ", "ᴡᴇʟᴄᴏᴍᴇ",
-          "ᴀᴀɪʏᴇ ᴀᴀɪʏᴇ", "ᴋᴀʜᴀ ᴛʜᴇ ᴋᴀʙsᴇ ᴡᴀɪᴛ ᴋᴀʀ ʀʜᴇ ᴀᴘᴋᴀ", "ɪss ɢʀᴏᴜᴘ ᴍᴀɪɴ ᴀᴘᴋᴀ sᴡᴀɢᴀᴛ ʜᴀɪ",
-          "ᴏʀ ʙᴀᴛᴀᴏ sᴜʙ ʙᴀᴅʜɪʏᴀ", "ᴀᴘᴋᴇ ᴀᴀɴᴇ sᴇ ɢʀᴏᴜᴘ ᴏʀ ᴀᴄʜʜᴀ ʜᴏɢʏᴀ"]
+champu = [
+    "ʜᴇʏ", "ʜᴏᴡ ᴀʀᴇ ʏᴏᴜ?", "ʜᴇʟʟᴏ", "ʜɪ", "ᴋᴀɪsᴇ ʜᴏ?", "ᴡᴇʟᴄᴏᴍᴇ ᴊɪ", "ᴡᴇʟᴄᴏᴍᴇ",
+    "ᴀᴀɪʏᴇ ᴀᴀɪʏᴇ", "ᴋᴀʜᴀ ᴛʜᴇ ᴋᴀʙsᴇ ᴡᴀɪᴛ ᴋᴀʀ ʀʜᴇ ᴀᴘᴋᴀ", "ɪss ɢʀᴏᴜᴘ ᴍᴀɪɴ ᴀᴘᴋᴀ sᴡᴀɢᴀᴛ ʜᴀɪ",
+    "ᴏʀ ʙᴀᴛᴀᴏ sᴜʙ ʙᴀᴅʜɪʏᴀ", "ᴀᴘᴋᴇ ᴀᴀɴᴇ sᴇ ɢʀᴏᴜᴘ ᴏʀ ᴀᴄʜʜᴀ ʜᴏɢʏᴀ"
+]
 
-class temp:
-    ME = None
-    CURRENT = 2
-    CANCEL = False
-    MELCOW = {}
-    U_NAME = None
-    B_NAME = None
-
-
-# Database setup for welcome status
 awelcomedb = MongoClient(MONGO_DB_URI)
 astatus_db = awelcomedb.awelcome_status_db.status
 
+async def is_assistant_admin(client, chat_id):
+    assistant = await get_assistant(chat_id)
+    if not assistant:
+        return False
+    try:
+        member = await client.get_chat_member(chat_id, assistant.id)
+        return member.status in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]
+    except Exception:
+        return False
+
 async def get_awelcome_status(chat_id):
     status = astatus_db.find_one({"chat_id": chat_id})
-    if status:
-        return status.get("welcome", "on")
-    return "on"
+    return status.get("welcome", "on") if status else "on"
 
 async def set_awelcome_status(chat_id, state):
-    astatus_db.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"welcome": state}},
-        upsert=True
-    )
+    astatus_db.update_one({"chat_id": chat_id}, {"$set": {"welcome": state}}, upsert=True)
 
-# Command to toggle welcome message
-@app.on_message(filters.command("awelcome") & ~filters.private)
-async def auto_state(_, message):
-    user_id = message.from_user.id
-    current_time = time()
 
-    last_message_time = user_last_message_time.get(user_id, 0)
-    if current_time - last_message_time < SPAM_WINDOW_SECONDS:
-        user_last_message_time[user_id] = current_time
-        user_command_count[user_id] = user_command_count.get(user_id, 0) + 1
-        if user_command_count[user_id] > SPAM_THRESHOLD:
-            hu = await message.reply_text(
-                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
+@app.on_message(filters.command("awelcome") & filters.group)
+async def awelcome_command(client, message: Message):
+    chat_id = message.chat.id
+    assistant = await get_assistant(chat_id)
+
+    if not assistant:
+        return await message.reply_text("⚠️ **Assistant account not found. Please try again later.**")
+
+    # Check if assistant is already in the group
+    try:
+        member = await client.get_chat_member(chat_id, assistant.id)
+        is_in_group = True
+    except:
+        is_in_group = False
+
+    # If the assistant is NOT in the group, create a button to add it
+    if not is_in_group:
+        if assistant.username:
+            # Assistant has a username, use direct "Add Assistant" link
+            button = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("➕ Add Assistant", url=f"t.me/{assistant.username}?startgroup=true")]]
             )
-            await asyncio.sleep(3)
-            await hu.delete()
-            return
-    else:
-        user_command_count[user_id] = 1
-        user_last_message_time[user_id] = current_time
+            return await message.reply_text(
+                f"⚠ **Assistant account [{assistant.username}](t.me/{assistant.username}) is not in this group.**\n"
+                "➜ Please add the assistant to enable welcome messages.",
+                reply_markup=button
+            )
+        else:
+            # Assistant has NO username → Use `userbotjoin` logic to create an invite link
+            try:
+                done = await message.reply_text("🔄 **Generating invite link...**")
+                invite_link = await client.create_chat_invite_link(chat_id, expire_date=None)
+                await asyncio.sleep(1)
 
-    usage = "**ᴜsᴀɢᴇ:**\n**⦿ /awelcome [on|off]**"
+                join_button = InlineKeyboardMarkup(
+                    [[InlineKeyboardButton("➕ Add Assistant", url=invite_link.invite_link)]]
+                )
+                await done.edit_text(
+                    "⚠ **Assistant account is not in this group.**\n"
+                    "➜ Click the button below to invite it.",
+                    reply_markup=join_button
+                )
+                return
+            except Exception:
+                return await message.reply_text(
+                    "⚠ **I don't have permission to create an invite link.**\n"
+                    "➜ Please manually add the assistant to enable this feature."
+                )
+
+    # Check if assistant has admin privileges
+    if not await is_assistant_admin(client, chat_id):
+        assistant_mention = f"@{assistant.username}" if assistant.username else f"`{assistant.id}`"
+        return await message.reply_text(
+            f"⚠ **This command doesn't work without giving admin privileges to {assistant_mention},** "
+            "which is the assistant account of the music bot."
+        )
+
+    usage = "**Usage:**\n**⦿ /awelcome [on|off]**"
     if len(message.command) == 1:
         return await message.reply_text(usage)
 
-    chat_id = message.chat.id
-    user = await app.get_chat_member(message.chat.id, message.from_user.id)
-    if user.status in (enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER):
-        state = message.text.split(None, 1)[1].strip().lower()
-        current_status = await get_awelcome_status(chat_id)
+    user = await app.get_chat_member(chat_id, message.from_user.id)
+    if user.status not in (enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER):
+        return await message.reply_text("⚠ **Only admins can enable assistant welcome messages!**")
 
-        if state == "off":
-            if current_status == "off":
-                await message.reply_text("** ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ᴀʟʀᴇᴀᴅʏ ᴅɪsᴀʙʟᴇᴅ!**")
-            else:
-                await set_awelcome_status(chat_id, "off")
-                await message.reply_text(f"**ᴅɪsᴀʙʟᴇᴅ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ɪɴ** {message.chat.title} **ʙʏ ᴀssɪsᴛᴀɴᴛ**")
-        elif state == "on":
-            if current_status == "on":
-                await message.reply_text("**ᴇɴᴀʙʟᴇᴅ ᴀssɪsᴛᴀɴᴛ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ᴀʟʀᴇᴀᴅʏ!**")
-            else:
-                await set_awelcome_status(chat_id, "on")
-                await message.reply_text(f"**ᴇɴᴀʙʟᴇᴅ ᴀssɪsᴛᴀɴᴛ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ ɪɴ** {message.chat.title}")
+    state = message.text.split(None, 1)[1].strip().lower()
+    current_status = await get_awelcome_status(chat_id)
+
+    if state == "off":
+        if current_status == "off":
+            await message.reply_text("✅ **Welcome messages are already disabled!**")
         else:
-            await message.reply_text(usage)
+            await set_awelcome_status(chat_id, "off")
+            await message.reply_text(f"❌ **Disabled welcome messages in {message.chat.title}!**")
+
+    elif state == "on":
+        if current_status == "on":
+            await message.reply_text("✅ **Welcome messages are already enabled!**")
+        else:
+            await set_awelcome_status(chat_id, "on")
+            await message.reply_text(f"✅ **Enabled welcome messages in {message.chat.title}!**")
+
     else:
-        await message.reply("**sᴏʀʀʏ ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴇɴᴀʙʟᴇ ᴀssɪsᴛᴀɴᴛ ᴡᴇʟᴄᴏᴍᴇ ɴᴏᴛɪғɪᴄᴀᴛɪᴏɴ!**")
+        await message.reply_text(usage)
 
-# Auto-welcome message for new members
+
+
 @app.on_chat_member_updated(filters.group, group=5)
-async def greet_new_members(_, member: ChatMemberUpdated):
-    userbot = await get_assistant(member.chat.id)
-    try:
-        chat_id = member.chat.id
-        welcome_status = await get_awelcome_status(chat_id)
-        if welcome_status == "off":
-            return
+async def greet_new_members(client: Client, member: ChatMemberUpdated):
+    chat_id = member.chat.id
 
-        user = member.new_chat_member.user
-
-        if member.new_chat_member and not member.old_chat_member:
-            welcome_text = f"{user.mention} , {random.choice(champu)}"
-            await userbot.send_message(chat_id, text=welcome_text)
-
-    except Exception as e:
-        LOGGER.error(e)
+    if not await is_assistant_admin(client, chat_id):
         return
+
+    welcome_status = await get_awelcome_status(chat_id)
+    if welcome_status == "off":
+        return
+
+    if member.new_chat_member and not member.old_chat_member:
+        user = member.new_chat_member.user
+        welcome_text = f"{user.mention}, {random.choice(champu)}"
+        assistant = await get_assistant(chat_id)
+        if assistant:
+            await assistant.send_message(chat_id, text=welcome_text)
