@@ -1,7 +1,7 @@
-# Extra Plugins For [ChampuMusic](https://github.com/TheChampu/ChampuMusic)
+# Extra Plugins For [ShahilXPlugins](https://github.com/Shahilali5/ChampuMusic)
 
 
-## Deployment for [ChampuMusic](https://github.com/TheChampu/ChampuMusic)
+## Deployment for [ShahilXMusic](https://github.com/Shahilali/ShahilxMusic)
 
 #### 🚀 Heroku Deployment
 
@@ -11,8 +11,8 @@
 
 
 ### 🖇 VPS Deployment
-- Get your [Necessary Variables](https://github.com/TheChampu/ChampuMusic/blob/master/sample.env)
-- clone repo : `git clone https://github.com/TheChampu/ChampuMusic && cd ChampuMusic`
+- Get your [Necessary Variables](https://github.com/Shahilali5/ShahilxMusic/blob/master/sample.env)
+- clone repo : `git clone https://github.com/Shahilali5/ShahilxMUsic && cd ShahilxMusic`
 - Setup by : `bash setup`
 - Install tmux to keep running your bot when you close the terminal by :
 `sudo apt install tmux && tmux`
@@ -21,4 +21,4 @@
 - For getting out from tmux session : Press `Ctrl+b` and then `d`<br>
 
 
-# For more help checkout [ChampuMusic](https://github.com/TheChampu/ChampuMusic)
+# For more help checkout [ShahilXMusic](https://github.com/Shahilali5/ShahilxMusic)
