@@ -12,11 +12,11 @@ from pyrogram.errors import (
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from config import BANNED_USERS
-from ShahilxMusic import app
-from ShahilxMusic.utils.database import get_assistant, get_cmode, get_lang, get_playmode, get_playtype
-from ShahilxMusic.utils.logger import play_logs
-from ShahilxMusic.utils.stream.stream import stream
-from ShahilxMusic.misc import SUDOERS
+from ChampuMusic import app
+from ChampuMusic.utils.database import get_assistant, get_cmode, get_lang, get_playmode, get_playtype
+from ChampuMusic.utils.logger import play_logs
+from ChampuMusic.utils.stream.stream import stream
+from ChampuMusic.misc import SUDOERS
 
 # Radio Station List
 RADIO_STATION = {

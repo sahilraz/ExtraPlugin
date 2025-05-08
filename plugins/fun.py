@@ -2,7 +2,7 @@ import requests
 from pyrogram import filters
 from pyrogram.types import Message
 
-from ShahilxMusic import app
+from ChampuMusic import app
 
 
 @app.on_message(

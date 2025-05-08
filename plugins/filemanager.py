@@ -8,8 +8,8 @@ from os.path import exists, isdir
 from pyrogram import filters
 from pyrogram.types import Message
 
-from ShahilxMusic import app
-from ShahilxMusic.misc import SUDOERS
+from ChampuMusic import app
+from ChampuMusic.misc import SUDOERS
 from utils.error import capture_err
 
 MAX_MESSAGE_SIZE_LIMIT = 4095

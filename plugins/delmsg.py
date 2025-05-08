@@ -1,11 +1,11 @@
-from ShahilxMusic import app
+from ChampuMusic import app
 from pyrogram import filters, Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, ChatPrivileges
-from ShahilxMusic.misc import SUDOERS
+from ChampuMusic.misc import SUDOERS
 from pyrogram.errors import UserNotParticipant
 from utils.permissions import adminsOnly, member_permissions
 from config import BANNED_USERS
-from ShahilxMusic.utils.database import get_assistant
+from ChampuMusic.utils.database import get_assistant
 
 async def is_admin_or_sudo(client, chat_id, user_id):
     if user_id in SUDOERS:

@@ -6,8 +6,8 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import BANNED_USERS
-from ShahilxMusic import app
-from ShahilxMusic.utils.database import (
+from ChampuMusic import app
+from ChampuMusic.utils.database import (
     delete_note,
     deleteall_notes,
     get_note,
@@ -15,12 +15,12 @@ from ShahilxMusic.utils.database import (
     save_note,
 )
 from utils.error import capture_err
-from ShahilxMusic.utils.functions import (
+from ChampuMusic.utils.functions import (
     check_format,
     extract_text_and_keyb,
     get_data_and_name,
 )
-from ShahilxMusic.utils.keyboard import ikb
+from ChampuMusic.utils.keyboard import ikb
 from utils.permissions import adminsOnly, member_permissions
 
 

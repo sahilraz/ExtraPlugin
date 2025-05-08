@@ -14,17 +14,17 @@ from os import getenv
 load_dotenv()
 
 from dotenv import load_dotenv
-from ShahilxMusic import app
+from ChampuMusic import app
 from utils.error import capture_err
 from utils.permissions import adminsOnly, member_permissions
-from ShahilxMusic.utils.keyboard import ikb
+from ChampuMusic.utils.keyboard import ikb
 from .notes import extract_urls
-from ShahilxMusic.utils.functions import (
+from ChampuMusic.utils.functions import (
     check_format,
     extract_text_and_keyb,
     get_data_and_name,
 )
-from ShahilxMusic.utils.database import (
+from ChampuMusic.utils.database import (
     deleteall_filters,
     get_filter,
     get_filters_names,

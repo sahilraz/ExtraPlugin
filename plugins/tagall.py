@@ -3,7 +3,7 @@ from pyrogram import filters
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.errors import FloodWait
 
-from ShahilxMusic import app
+from ChampuMusic import app
 
 
 SPAM_CHATS = []

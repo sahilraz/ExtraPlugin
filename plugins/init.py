@@ -1,8 +1,8 @@
 import asyncio
 
 import config
-from ShahilxMusic import app
-from ShahilxMusic.utils.database import get_assistant
+from ChampuMusic import app
+from ChampuMusic.utils.database import get_assistant
 
 AUTO = True
 

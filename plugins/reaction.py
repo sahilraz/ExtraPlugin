@@ -1,9 +1,9 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
-from ShahilxMusic import app
+from ChampuMusic import app
 from config import LOGGER_ID
-from ShahilxMusic.utils.database import get_assistant
+from ChampuMusic.utils.database import get_assistant
 import asyncio
 import random
 

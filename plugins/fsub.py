@@ -1,9 +1,9 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ChatPermissions
 from pymongo import MongoClient
-from ShahilxMusic import app
+from ChampuMusic import app
 import asyncio
-from ShahilxMusic.misc import SUDOERS
+from ChampuMusic.misc import SUDOERS
 from config import MONGO_DB_URI
 from pyrogram.enums import ChatMembersFilter
 from pyrogram.errors import (

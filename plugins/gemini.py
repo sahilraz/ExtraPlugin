@@ -1,7 +1,7 @@
 import requests
 from pyrogram import filters
 from pyrogram.enums import ChatAction
-from ShahilxMusic import app
+from ChampuMusic import app
 
 BASE_API_URL = "https://amanshah.serv00.net/gemini?question="
 
