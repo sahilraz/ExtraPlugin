@@ -1,4 +1,4 @@
-from ShahilxMusic import app
+from ChampuMusic import app
 from pyrogram import filters
 from pyrogram.types import (
     InlineQueryResultArticle, InputTextMessageContent,
