@@ -4,8 +4,8 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
-from ChampuMusic import app
-from ChampuMusic.utils.database import add_served_chat, get_assistant
+from ShahilxMusic import app
+from ShahilxMusic.utils.database import add_served_chat, get_assistant
 
 
 start_txt = """**
@@ -31,7 +31,7 @@ async def start(_, msg):
         ],
         [
           InlineKeyboardButton("Shahil", url="https://t.me/Shahil440"),
-          InlineKeyboardButton("𓆩 ˹𝖲𝗁𝖺𝗁𝗂𝗅 ✘ 𝖡𝗈𝗍𝗌˼ 𓆪", url="https://t.me/ShahilBotsList"),
+          InlineKeyboardButton("⏤͟͞ Λᴅᴀʀsʜ @unknown_rob", url="https://t.me/unknown_rob"),
           ],
                [
                 InlineKeyboardButton("ᴏᴡɴᴇʀ", url="https://t.me/shahil440"),

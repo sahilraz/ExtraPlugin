@@ -1,4 +1,4 @@
-# Extra Plugins For [ShahilXPlugins](https://github.com/Shahilali5/ChampuMusic)
+# Extra Plugins For [ShahilXPlugins](https://github.com/Shahilali5/ShahilxMusic)
 
 
 ## Deployment for [ShahilXMusic](https://github.com/Shahilali/ShahilxMusic)
@@ -17,7 +17,7 @@
 - Install tmux to keep running your bot when you close the terminal by :
 `sudo apt install tmux && tmux`
 - Finally run the bot by :
-`python3 -m ChampuMusic`
+`python3 -m ShahilxMusic`
 - For getting out from tmux session : Press `Ctrl+b` and then `d`<br>
 
 

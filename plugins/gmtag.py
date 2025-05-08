@@ -1,4 +1,4 @@
-from ChampuMusic import app 
+from ShahilxMusic import app 
 import asyncio
 import random
 from pyrogram import Client, filters
