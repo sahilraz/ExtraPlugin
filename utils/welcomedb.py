@@ -1,4 +1,4 @@
-from DevilMusic.core.mongo import mongodb
+from ChampuMusic.core.mongo import mongodb
 
 greetingsdb = mongodb.greetings
 
