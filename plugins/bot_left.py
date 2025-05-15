@@ -4,8 +4,8 @@ from pyrogram import filters
 from pyrogram.types import Message
 
 from config import LOGGER_ID
-from DevilMusic import app
-from DevilMusic.utils.database import delete_served_chat, get_assistant
+from ChampuMusic import app
+from ChampuMusic.utils.database import delete_served_chat, get_assistant
 
 photo = [
     "https://telegra.ph/file/1949480f01355b4e87d26.jpg",

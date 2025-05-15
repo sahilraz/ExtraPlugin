@@ -2,7 +2,7 @@ import requests
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from DevilMusic import app
+from ChampuMusic import app
 
 
 def get_pypi_info(package_name):

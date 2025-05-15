@@ -1,6 +1,6 @@
 import aiohttp
 from pyrogram import filters
-from DevilMusic import app
+from ChampuMusic import app
 
 # API Endpoints
 API_BASE_URL = "https://ff-spy.onrender.com"

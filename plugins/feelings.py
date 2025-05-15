@@ -1,5 +1,5 @@
 from pyrogram import filters
-from DevilMusic import app
+from ChampuMusic import app
 import random
 
 # List of alone GIF URLs

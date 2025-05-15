@@ -2,7 +2,7 @@ from pyrogram.handlers import ChatMemberUpdatedHandler
 from pyrogram.types import ChatMemberUpdated, Message
 from typing import Union, List
 from pyrogram import Client, filters
-from DevilMusic import app
+from ChampuMusic import app
 
 # Default state for /infovc
 infovc_enabled = True  # Default enabled

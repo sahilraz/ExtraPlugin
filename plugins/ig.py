@@ -2,7 +2,7 @@ import re
 import requests
 from pyrogram import filters
 
-from DevilMusic import app
+from ChampuMusic import app
 from config import LOGGER_ID
 
 

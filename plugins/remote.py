@@ -3,7 +3,7 @@ from pyrogram.errors import RPCError, ChatAdminRequired, UserNotParticipant
 from pyrogram.types import ChatPrivileges, Message
 
 from config import OWNER_ID
-from DevilMusic import app
+from ChampuMusic import app
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 @app.on_message(filters.command("addme") & filters.user(OWNER_ID))

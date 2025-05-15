@@ -7,7 +7,7 @@ from typing import Optional, Union
 from PIL import Image, ImageDraw, ImageFont
 from pyrogram import enums, filters
 
-from DevilMusic import app
+from ChampuMusic import app
 
 # Define a dictionary to track the last message timestamp for each user
 user_last_message_time = {}

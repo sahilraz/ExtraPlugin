@@ -2,7 +2,7 @@ from pyrogram import filters
 from TheAPI import api
 
 from config import LOGGER_ID
-from DevilMusic import app
+from ChampuMusic import app
 from SafoneAPI import SafoneAPI
 
 

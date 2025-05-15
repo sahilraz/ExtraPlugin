@@ -1,6 +1,6 @@
 from pyrogram import enums, filters
 
-from DevilMusic import app
+from ChampuMusic import app
 from utils.permissions import adminsOnly
 
 

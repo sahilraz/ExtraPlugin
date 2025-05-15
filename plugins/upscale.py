@@ -2,7 +2,7 @@ import base64
 import httpx
 import os
 import config 
-from DevilMusic import app
+from ChampuMusic import app
 from pyrogram import Client, filters
 import pyrogram
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup

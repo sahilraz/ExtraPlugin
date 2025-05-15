@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
-from DevilMusic import app
+from ChampuMusic import app
 from config import OWNER_ID
-from DevilMusic.misc import SUDOERS
+from ChampuMusic.misc import SUDOERS
 from pyrogram.types import Message
 
 @app.on_message(filters.command(["post"], prefixes=["/", "."]) & SUDOERS)

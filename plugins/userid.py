@@ -1,7 +1,7 @@
 from pyrogram import filters
 from pyrogram.enums import ParseMode
 
-from DevilMusic import app
+from ChampuMusic import app
 
 
 @app.on_message(filters.command("me"))

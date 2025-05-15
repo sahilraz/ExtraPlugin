@@ -4,8 +4,8 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 import config
-from DevilMusic import app
-from DevilMusic.utils.database import add_served_chat, get_assistant
+from ChampuMusic import app
+from ChampuMusic.utils.database import add_served_chat, get_assistant
 
 
 start_txt = """**

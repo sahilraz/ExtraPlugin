@@ -6,7 +6,7 @@ from pyrogram.types import Message
 from pyrogram.enums import ChatMembersFilter
 
 from config import MONGO_DB_URI
-from DevilMusic import app
+from ChampuMusic import app
 
 mongo = MongoCli(MONGO_DB_URI).Rankings
 
