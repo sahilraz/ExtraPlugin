@@ -14,13 +14,13 @@ from pyrogram.types import (
 from string import ascii_lowercase
 from typing import Dict, Union
 
-from ChampuMusic import app
-from ChampuMusic.misc import SUDOERS
-from ChampuMusic.core.mongo import mongodb
+from DevilMusic import app
+from DevilMusic.misc import SUDOERS
+from DevilMusic.core.mongo import mongodb
 from utils.error import capture_err
-from ChampuMusic.utils.keyboard import ikb
-from ChampuMusic.utils.database import save_filter
-from ChampuMusic.utils.functions import (
+from DevilMusic.utils.keyboard import ikb
+from DevilMusic.utils.database import save_filter
+from DevilMusic.utils.functions import (
     extract_user,
     extract_user_and_reason,
     time_converter,
@@ -636,8 +636,8 @@ async def check_warns(_, message: Message):
 
 
 from pyrogram import filters
-from ChampuMusic import app
-from ChampuMusic.misc import SUDOERS
+from DevilMusic import app
+from DevilMusic.misc import SUDOERS
 import asyncio
 from pyrogram.errors import FloodWait
 
@@ -707,7 +707,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import UserNotParticipant, ChatAdminRequired, UserAlreadyParticipant, InviteHashExpired
 
 # Create a bot instance
-from ChampuMusic import app 
+from DevilMusic import app 
 
 @app.on_message(filters.command("unbanme"))
 async def unbanme(client, message):

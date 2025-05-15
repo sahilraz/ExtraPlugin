@@ -2,17 +2,17 @@
 from pyrogram import filters
 from pyrogram.enums import ChatType
 from strings import get_string
-from ChampuMusic import app
+from DevilMusic import app
 from pyrogram import *
 from pyrogram.types import *
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from ChampuMusic.utils import Champubin
-from ChampuMusic.utils.database import get_assistant, get_lang
+from DevilMusic.utils import Champubin
+from DevilMusic.utils.database import get_assistant, get_lang
 import asyncio
 from os import getenv
 from dotenv import load_dotenv
 load_dotenv()
-from ChampuMusic.logging import LOGGER
+from DevilMusic.logging import LOGGER
 
 @app.on_message(
     filters.command(["vcuser", "vcusers", "vcmember", "vcmembers"]) & filters.admin

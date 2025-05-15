@@ -1,8 +1,8 @@
 import asyncio
 
 import config
-from ChampuMusic import app
-from ChampuMusic.utils.database import get_assistant
+from DevilMusic import app
+from DevilMusic.utils.database import get_assistant
 
 AUTO = True
 

@@ -4,8 +4,8 @@ import logging
 from pyrogram import enums, filters
 from pyrogram.types import ChatMemberUpdated
 from pymongo import MongoClient
-from ChampuMusic import app
-from ChampuMusic.utils.database import get_assistant
+from DevilMusic import app
+from DevilMusic.utils.database import get_assistant
 from config import MONGO_DB_URI
 
 # Configure logging

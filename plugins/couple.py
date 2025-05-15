@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw
 import requests
 
 from utils import get_image, get_couple, save_couple
-from ChampuMusic import app
+from DevilMusic import app
 
 
 # get current date in GMT+5:30 timezone
@@ -150,3 +150,9 @@ async def ctest(_, message):
             os.remove(cppic_path)
         except Exception as cleanup_error:
             print(f"Error during cleanup: {cleanup_error}")
+
+__MODULE__ = "Cᴏᴜᴘʟᴇ"
+__HELP__ = """
+/couple or /couples - Sᴇɴᴅs ᴀ ʀᴀɴᴅᴏᴍ ᴄᴏᴜᴘʟᴇ ɪᴍᴀɢᴇ
+"""
+

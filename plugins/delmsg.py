@@ -1,11 +1,11 @@
-from ChampuMusic import app
+from DevilMusic import app
 from pyrogram import filters, Client
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, ChatPrivileges
-from ChampuMusic.misc import SUDOERS
+from DevilMusic.misc import SUDOERS
 from pyrogram.errors import UserNotParticipant
 from utils.permissions import adminsOnly, member_permissions
 from config import BANNED_USERS
-from ChampuMusic.utils.database import get_assistant
+from DevilMusic.utils.database import get_assistant
 
 async def is_admin_or_sudo(client, chat_id, user_id):
     if user_id in SUDOERS:
