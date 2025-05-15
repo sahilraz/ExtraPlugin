@@ -11,14 +11,17 @@ API_ENDPOINTS = {
     "SPAM_FRIEND": f"{API_BASE_URL}/spamfriend"
 }
 
+# Loading message format
+LOADING_MESSAGE = "**ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ʀᴇǫᴜᴇsᴛ... ⏳**"
+
 # Response message formats
 MESSAGES = {
-    "SUCCESS": """✦ ʜᴇʀᴇ'ꜱ ʏᴏᴜʀ ʟɪᴋᴇꜱ ʀᴇᴘᴏʀᴛ 💖
+    "SUCCESS": """**✦ ʜᴇʀᴇ's ʏᴏᴜʀ ʟɪᴋᴇs ʀᴇᴘᴏʀᴛ 💖**
 
 ⭒ ɴɪᴄᴋɴᴀᴍᴇ: {nickname}
 ⭒ ʀᴇɢɪᴏɴ: {region_name}
 
-╭─ 🅛🅘🅚🅔 🅢🅣🅐🅣🅢 ─╮
+╭─ **🅛🅘🅚🅔 🅢🅣🅐🅣🅢** ─╮
 ┃ 💫 ʙᴇꜰᴏʀᴇ: {likes_before}
 ┃ 💞 ᴀꜰᴛᴇʀ: {likes_after}
 ┃ 🎁 ɢɪᴠᴇɴ: {likes_given}
@@ -26,10 +29,10 @@ MESSAGES = {
 
 ꜱᴛᴀʏ ᴀᴡᴇꜱᴏᴍᴇ 💌""",
 
-    "MAX_LIKES": """✦ ʜєʏ {nickname} ✦
+    "MAX_LIKES": """**✦ ʜєʏ {nickname} ✦**
 
 ──────────────────────────
-❗ ᴛʜɪs ɪᴅ ʜᴀs ʀᴇᴄᴇɪᴠᴇᴅ ᴀʟʟ ʟɪᴋᴇs ғᴏʀ ᴛᴏᴅᴀʏ! ❗
+**❗ ᴛʜɪs ɪᴅ ʜᴀs ʀᴇᴄᴇɪᴠᴇᴅ ᴀʟʟ ʟɪᴋᴇs ғᴏʀ ᴛᴏᴅᴀʏ! ❗**
 ──────────────────────────
 
 ⌛ ᴄᴏᴍᴇ ʙᴀᴄᴋ ᴛᴏᴍᴏʀʀᴏᴡ ᴛᴏ ᴅɪꜱʜ ᴍᴏʀᴇ ʟᴏᴠᴇ! 💖""",
@@ -49,16 +52,16 @@ MESSAGES = {
 
     "INVALID_REGION": "❌ ɪɴᴠᴀʟɪᴅ ʀᴇɢɪᴏɴ! ᴏɴʟʏ 'ɪɴᴅ' ᴀɴᴅ 'ᴇᴜ' ᴀʀᴇ sᴜᴘᴘᴏʀᴛᴇᴅ.",
 
-    "NOT_BANNED": """╭── ʙᴀɴ sᴛᴀᴛᴜs ──╮
+    "NOT_BANNED": """╭── **ʙᴀɴ sᴛᴀᴛᴜs** ──╮
 ┃ ᴜɪᴅ: {uid}
-┃ sᴛᴀᴛᴜs: ɴᴏᴛ ʙᴀɴɴᴇᴅ ✅
+┃ sᴛᴀᴛᴜs: **ɴᴏᴛ ʙᴀɴɴᴇᴅ** ✅
 ╰─────────────────╯
 
 🎉 ʏᴏᴜ'ʀᴇ ᴀʟʟ ᴄʟᴇᴀʀ! ᴋᴇᴇᴘ ᴇɴᴊᴏʏɪɴɢ! 🟢""",
 
-    "BANNED": """╭── ʙᴀɴ sᴛᴀᴛᴜs ──╮
+    "BANNED": """╭── **ʙᴀɴ sᴛᴀᴛᴜs** ──╮
 ┃ ᴜɪᴅ: {uid}
-┃ sᴛᴀᴛᴜs: ʙᴀɴɴᴇᴅ 🚫
+┃ sᴛᴀᴛᴜs: **ʙᴀɴɴᴇᴅ** 🚫
 ╰─────────────────╯
 
 💔 ᴛʜɪs ᴀᴄᴄᴏᴜɴᴛ ʜᴀs ʙᴇᴇɴ ʟᴏsᴛ ᴛᴏ ᴛʜᴇ ᴠᴏɪᴅ... 
@@ -80,7 +83,7 @@ MESSAGES = {
     
     "NO_RESULTS": "❌ ɴᴏ ʀᴇsᴜʟᴛs ғᴏᴜɴᴅ ғᴏʀ ʏᴏᴜʀ sᴇᴀʀᴄʜ.",
     
-    "SEARCH_RESULTS": """✦ sᴇᴀʀᴄʜ ʀᴇsᴜʟᴛs ғᴏʀ "{query}" ✦
+    "SEARCH_RESULTS": """**✦ sᴇᴀʀᴄʜ ʀᴇsᴜʟᴛs ғᴏʀ "{query}" ✦**
 
 ғᴏᴜɴᴅ {count} ᴍᴀᴛᴄʜᴇs:
 
@@ -89,23 +92,23 @@ MESSAGES = {
 ᴘᴀɢᴇ: {current_page}/{total_pages}""",
 
     # Spam friend command messages
-    "SPAM_SUCCESS": """✦ ꜰʀɪᴇɴᴅ ʀᴇǫᴜᴇsᴛ sᴘᴀᴍ ʀᴇᴘᴏʀᴛ 💫
+    "SPAM_SUCCESS": """**✦ ꜰʀɪᴇɴᴅ ʀᴇǫᴜᴇsᴛ sᴘᴀᴍ ʀᴇᴘᴏʀᴛ 💫**
 
 ⭒ ɴɪᴄᴋɴᴀᴍᴇ: {nickname}
 ⭒ ʀᴇɢɪᴏɴ: {region_name}
 
-╭─ 🅢🅟🅐🅜 🅢🅣🅐🅣🅢 ─╮
+╭─ **🅢🅟🅐🅜 🅢🅣🅐🅣🅢** ─╮
 ┃ 📨 ᴛᴏᴛᴀʟ sᴘᴀᴍ: {totalspam}
 ╰────────────────╯
 
 ✨ sᴘᴀᴍ sᴇɴᴛ sᴜᴄᴄᴇssғᴜʟʟʏ!""",
 
-    "SPAM_MAX_REACHED": """✦ ꜰʀɪᴇɴᴅ ʀᴇǫᴜᴇsᴛ sᴘᴀᴍ ʀᴇᴘᴏʀᴛ ⚠️
+    "SPAM_MAX_REACHED": """**✦ ꜰʀɪᴇɴᴅ ʀᴇǫᴜᴇsᴛ sᴘᴀᴍ ʀᴇᴘᴏʀᴛ ⚠️**
 
 ⭒ ɴɪᴄᴋɴᴀᴍᴇ: {nickname}
 ⭒ ʀᴇɢɪᴏɴ: {region_name}
 
-❗ᴍᴀxɪᴍᴜᴍ sᴘᴀᴍ ʟɪᴍɪᴛ ʀᴇᴀᴄʜᴇᴅ
+**❗ᴍᴀxɪᴍᴜᴍ sᴘᴀᴍ ʟɪᴍɪᴛ ʀᴇᴀᴄʜᴇᴅ**
 ⌛ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ!""",
 
     "MISSING_ARGS_SPAM": """❌ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ ᴄᴏᴍᴍᴀɴᴅ!
@@ -124,7 +127,9 @@ REGION_NAMES = {
 
 @app.on_message(filters.command("like"))
 async def give_likes(_, message):
+    loading_msg = None
     try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
         # Split command arguments
         args = message.text.split()
         
@@ -173,10 +178,15 @@ async def give_likes(_, message):
             
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
 
 @app.on_message(filters.command("banned"))
 async def check_ban(_, message):
+    loading_msg = None
     try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
         # Split command arguments
         args = message.text.split()
         
@@ -204,10 +214,15 @@ async def check_ban(_, message):
             
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
 
 @app.on_message(filters.command("search"))
 async def search_players(_, message):
+    loading_msg = None
     try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
         # Split command arguments
         args = message.text.split()
         
@@ -279,10 +294,15 @@ async def search_players(_, message):
             
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
 
 @app.on_message(filters.command("spamf"))
 async def spam_friend(_, message):
+    loading_msg = None
     try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
         # Split command arguments
         args = message.text.split()
         
@@ -340,6 +360,9 @@ async def spam_friend(_, message):
             
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
 
 __MODULE__ = "ꜰʀᴇᴇ ꜰɪʀᴇ"
 __HELP__ = """
