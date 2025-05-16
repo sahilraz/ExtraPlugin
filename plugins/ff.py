@@ -1,6 +1,8 @@
 import aiohttp
 from pyrogram import filters
 from ChampuMusic import app
+from datetime import datetime
+from io import BytesIO
 
 # API Endpoints
 API_BASE_URL = "https://ff-spy.onrender.com"
@@ -8,7 +10,11 @@ API_ENDPOINTS = {
     "GIVE_LIKES": f"{API_BASE_URL}/givelikes",
     "CHECK_BAN": f"{API_BASE_URL}/isbanned",
     "SEARCH": f"{API_BASE_URL}/fuzzysearch",
-    "SPAM_FRIEND": f"{API_BASE_URL}/spamfriend"
+    "SPAM_FRIEND": f"{API_BASE_URL}/spamfriend",
+    "TOKEN_STATUS": f"{API_BASE_URL}/tokenstatus",
+    "RELOAD_TOKEN": f"{API_BASE_URL}/reloadtoken",
+    "GET_INFO": f"{API_BASE_URL}/getinfo",
+    "GEN_PROFILE_IMG": f"{API_BASE_URL}/genprofileimg"
 }
 
 # Loading message format
@@ -52,14 +58,14 @@ MESSAGES = {
 
     "INVALID_REGION": "❌ ɪɴᴠᴀʟɪᴅ ʀᴇɢɪᴏɴ! ᴏɴʟʏ 'ɪɴᴅ' ᴀɴᴅ 'ᴇᴜ' ᴀʀᴇ sᴜᴘᴘᴏʀᴛᴇᴅ.",
 
-    "NOT_BANNED": """╭── **ʙᴀɴ sᴛᴀᴛᴜs** ──╮
+    "NOT_BANNED": """╭───── **ʙᴀɴ sᴛᴀᴛᴜs** ────╮
 ┃ ᴜɪᴅ: {uid}
 ┃ sᴛᴀᴛᴜs: **ɴᴏᴛ ʙᴀɴɴᴇᴅ** ✅
 ╰─────────────────╯
 
 🎉 ʏᴏᴜ'ʀᴇ ᴀʟʟ ᴄʟᴇᴀʀ! ᴋᴇᴇᴘ ᴇɴᴊᴏʏɪɴɢ! 🟢""",
 
-    "BANNED": """╭── **ʙᴀɴ sᴛᴀᴛᴜs** ──╮
+    "BANNED": """╭───── **ʙᴀɴ sᴛᴀᴛᴜs** ────╮
 ┃ ᴜɪᴅ: {uid}
 ┃ sᴛᴀᴛᴜs: **ʙᴀɴɴᴇᴅ** 🚫
 ╰─────────────────╯
@@ -117,7 +123,78 @@ MESSAGES = {
 ʀᴇɢɪᴏɴs: ɪɴᴅ/ᴇᴜ
 ᴇxᴀᴍᴘʟᴇ: /spamf ind 123456789""",
 
-    "INVALID_SPAM_UID": "❌ ᴛʜᴇ ʀᴇǫᴜᴇsᴛᴇᴅ ᴜɪᴅ ᴅᴏᴇsɴ'ᴛ ᴇxɪsᴛ ᴏʀ ɪs ɪɴᴠᴀʟɪᴅ. ᴘʟᴇᴀsᴇ ᴛʀʏ ᴡɪᴛʜ ᴀ ᴅɪғғᴇʀᴇɴᴛ ᴜɪᴅ."
+    "INVALID_SPAM_UID": "❌ ᴛʜᴇ ʀᴇǫᴜᴇsᴛᴇᴅ ᴜɪᴅ ᴅᴏᴇsɴ'ᴛ ᴇxɪsᴛ ᴏʀ ɪs ɪɴᴠᴀʟɪᴅ. ᴘʟᴇᴀsᴇ ᴛʀʏ ᴡɪᴛʜ ᴀ ᴅɪғғᴇʀᴇɴᴛ ᴜɪᴅ.",
+
+    # Token status messages
+    "TOKEN_STATUS_HEADER": """**✦ ᴛᴏᴋᴇɴ sᴛᴀᴛᴜs ʀᴇᴘᴏʀᴛ ✦**
+ʟᴀsᴛ ᴜᴘᴅᴀᴛᴇᴅ: {last_updated}
+
+""",
+    
+    "TOKEN_STATUS_REGION": """╭── {region_name} ──╮
+┃ sᴛᴀᴛᴜs: {status}
+┃ ᴛᴏᴋᴇɴs: {token_count}
+{expiry_info}╰─────────────╯
+
+""",
+
+    # Token reload messages
+    "TOKEN_RELOAD_SUCCESS": """**✦ ᴛᴏᴋᴇɴ ʀᴇʟᴏᴀᴅ ʀᴇᴘᴏʀᴛ ✦**
+
+{message}
+
+╭── **ʀᴇʟᴏᴀᴅ ᴅᴇᴛᴀɪʟs** ──╮
+┃ 🔄 ʟᴏᴀᴅᴇᴅ ʀᴇɢɪᴏɴs: {regions}
+┃ 🎫 ᴛᴏᴛᴀʟ ᴛᴏᴋᴇɴs: {total}
+┃ ⏰ ᴛɪᴍᴇsᴛᴀᴍᴘ: {timestamp}
+╰─────────────────╯""",
+
+    # Get info messages
+    "GET_INFO_ERROR": "❌ **ᴇʀʀᴏʀ:** {error}",
+    
+    "GET_INFO_SUCCESS": """**✦ ᴀᴄᴄᴏᴜɴᴛ ɪɴғᴏʀᴍᴀᴛɪᴏɴ ✦**
+
+╭───── **ʙᴀsɪᴄ ɪɴғᴏ** ─────╮
+┃ 👤 ɴᴀᴍᴇ: `{nickname}`
+┃ 🆔 ᴜɪᴅ: `{uid}`
+┃ 📊 ʟᴇᴠᴇʟ: {level} (ᴇxᴘ: {exp})
+┃ 🌍 ʀᴇɢɪᴏɴ: {region}
+┃ ❤️ ʟɪᴋᴇs: {likes}
+┃ 🏅 ʜᴏɴᴏʀ sᴄᴏʀᴇ: {honor_score}
+┃ 🏆 ᴛɪᴛʟᴇ: {title}
+┃ ✒️ sɪɢɴᴀᴛᴜʀᴇ: `{signature}`
+╰────────────────────╯
+
+╭──── **ᴀᴄᴛɪᴠɪᴛʏ** ────╮
+┃ 🔄 ᴏʙ ᴠᴇʀsɪᴏɴ: {ob_version}
+┃ 🎖️ ʙᴘ ʙᴀᴅɢᴇs: {bp_badges}
+┃ 🏆 ʙʀ ʀᴀɴᴋ: {br_points}
+┃ ⚔️ ᴄs ᴘᴏɪɴᴛs: {cs_points}
+┃ 📅 ᴄʀᴇᴀᴛᴇᴅ: {created_at}
+┃ ⏳ ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}
+╰────────────────────╯
+
+╭──── **ᴏᴠᴇʀᴠɪᴇᴡ** ────╮
+┃ 🎭 ᴀᴠᴀᴛᴀʀ ɪᴅ: {avatar_id}
+┃ 🎨 ʙᴀɴɴᴇʀ ɪᴅ: {banner_id}
+┃ 📌 ᴘɪɴ ɪᴅ: {pin_id}
+┃ ⚡ sᴋɪʟʟs: {skills}
+╰────────────────────╯
+
+╭───── **ᴘᴇᴛ ɪɴғᴏ** ─────╮
+┃ ✅ ᴇǫᴜɪᴘᴘᴇᴅ: {pet_equipped}
+┃ 🐾 ᴘᴇᴛ ᴛʏᴘᴇ: {pet_id}
+┃ 🦊 ᴘᴇᴛ ɴᴀᴍᴇ: {pet_name}
+┃ 🌟 ᴘᴇᴛ ᴇxᴘ: {pet_exp}
+┃ 📈 ᴘᴇᴛ ʟᴇᴠᴇʟ: {pet_level}
+╰────────────────────╯
+
+╭───── **ɢᴜɪʟᴅ ɪɴғᴏ** ─────╮
+┃ 🏰 ɢᴜɪʟᴅ ɴᴀᴍᴇ: {guild_name}
+┃ 🆔 ɢᴜɪʟᴅ ɪᴅ: `{guild_id}`
+┃ 🎖️ ɢᴜɪʟᴅ ʟᴇᴠᴇʟ: {guild_level}
+┃ 👥 ᴍᴇᴍʙᴇʀs: {members}/{capacity}
+╰────────────────────╯"""
 }
 
 REGION_NAMES = {
@@ -364,12 +441,192 @@ async def spam_friend(_, message):
         if loading_msg:
             await loading_msg.delete()
 
+@app.on_message(filters.command("tokenstatus"))
+async def token_status(_, message):
+    loading_msg = None
+    try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
+        
+        # Make API request
+        async with aiohttp.ClientSession() as session:
+            url = API_ENDPOINTS['TOKEN_STATUS']
+            async with session.get(url) as response:
+                data = await response.json()
+                
+        if not data.get("success", False):
+            return await message.reply_text("❌ ᴇʀʀᴏʀ ғᴇᴛᴄʜɪɴɢ ᴛᴏᴋᴇɴ sᴛᴀᴛᴜs")
+        
+        # Start building response message
+        response_text = MESSAGES["TOKEN_STATUS_HEADER"].format(
+            last_updated=data["lastUpdated"]
+        )
+        
+        # Process each region
+        for region, info in data["regions"].items():
+            expiry_info = ""
+            if info["status"] == "✅ VALID":
+                expiry_info = f"""┃ ᴇxᴘɪʀᴇs: {info['expiresAt']}
+┃ ᴛɪᴍᴇ ʟᴇғᴛ: {info['timeRemaining']}
+┃ ɴᴇxᴛ ᴜᴘᴅᴀᴛᴇ: {info['nextUpdateIn']}"""
+            
+            response_text += MESSAGES["TOKEN_STATUS_REGION"].format(
+                region_name=region,
+                status=info["status"],
+                token_count=info["tokenCount"],
+                expiry_info=f"{expiry_info}\n" if expiry_info else ""
+            )
+        
+        await message.reply_text(response_text.strip())
+            
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
+
+@app.on_message(filters.command("reloadtoken"))
+async def reload_token(_, message):
+    loading_msg = None
+    try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
+        
+        # Make API request
+        async with aiohttp.ClientSession() as session:
+            url = API_ENDPOINTS['RELOAD_TOKEN']
+            async with session.get(url) as response:
+                data = await response.json()
+                
+        if not data.get("success", False):
+            return await message.reply_text("❌ ᴇʀʀᴏʀ ʀᴇʟᴏᴀᴅɪɴɢ ᴛᴏᴋᴇɴs")
+        
+        # Format the loaded regions list
+        loaded_regions = ", ".join(data["loadedRegions"])
+        
+        # Build and send response
+        response_text = MESSAGES["TOKEN_RELOAD_SUCCESS"].format(
+            message=data["message"],
+            regions=loaded_regions,
+            total=data["totalTokens"],
+            timestamp=data["timestamp"]
+        )
+        
+        await message.reply_text(response_text)
+            
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
+
+@app.on_message(filters.command(["get", "GET"], prefixes=["/", ""]))
+async def get_info(_, message):
+    loading_msg = None
+    try:
+        loading_msg = await message.reply_text(LOADING_MESSAGE)
+        
+        # Split command arguments
+        args = message.text.split()
+        
+        # Check if UID is provided
+        if len(args) != 2:
+            return await message.reply_text("❌ ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜɪᴅ\n\nᴇxᴀᴍᴘʟᴇ: `/get 123456789`")
+        
+        uid = args[1]
+        
+        # Make API request
+        async with aiohttp.ClientSession() as session:
+            url = f"{API_ENDPOINTS['GET_INFO']}/{uid}"
+            async with session.get(url) as response:
+                data = await response.json()
+                
+        # Check for error response
+        if "error" in data:
+            return await message.reply_text(MESSAGES["GET_INFO_ERROR"].format(error=data["error"]))
+        
+        # Extract account info
+        account_info = data.get("accountInfo", {})
+        basic_info = account_info.get("basicInfo", {})
+        profile_info = account_info.get("profileInfo", {})
+        clan_info = account_info.get("clanBasicInfo", {})
+        pet_info = account_info.get("petInfo", {})
+        social_info = account_info.get("socialInfo", {})
+        honour_info = account_info.get("HonourScoreInfo", {})
+        
+        # Convert timestamps
+        created_at = datetime.fromtimestamp(basic_info.get("createAt", 0)).strftime("%d %B %Y at %H:%M:%S")
+        last_login = datetime.fromtimestamp(basic_info.get("lastLoginAt", 0)).strftime("%d %B %Y at %H:%M:%S")
+        
+        # Get equipped skills
+        equipped_skills = profile_info.get("EquippedSkills", [])
+        skills_text = ", ".join(str(skill["skill"]) for skill in equipped_skills) if equipped_skills else "N/A"
+        
+        # Format response
+        response_text = MESSAGES["GET_INFO_SUCCESS"].format(
+            nickname=basic_info.get("nickname", "N/A"),
+            uid=basic_info.get("accountId", "N/A"),
+            level=basic_info.get("level", "N/A"),
+            exp=basic_info.get("exp", "N/A"),
+            region=basic_info.get("region", "N/A"),
+            likes=basic_info.get("likes", "N/A"),
+            honor_score=honour_info.get("HonourScore", "N/A"),
+            title=basic_info.get("title", "N/A"),
+            signature=social_info.get("signature", "N/A"),
+            ob_version=basic_info.get("OBVersion", "N/A"),
+            bp_badges=basic_info.get("badgeCnt", "N/A"),
+            br_points=basic_info.get("BRPoints", "N/A"),
+            cs_points=basic_info.get("csRankingPoints", "N/A"),
+            created_at=created_at,
+            last_login=last_login,
+            avatar_id=basic_info.get("avatarId", "N/A"),
+            banner_id=basic_info.get("bannerId", "N/A"),
+            pin_id=basic_info.get("PinId", "N/A"),
+            skills=skills_text,
+            pet_equipped="Yes" if pet_info.get("isSelected", 0) == 1 else "No",
+            pet_id=pet_info.get("id", "N/A"),
+            pet_name=pet_info.get("name", "N/A"),
+            pet_exp=pet_info.get("exp", "N/A"),
+            pet_level=pet_info.get("level", "N/A"),
+            guild_name=clan_info.get("clanName", "N/A"),
+            guild_id=clan_info.get("clanId", "N/A"),
+            guild_level=clan_info.get("clanLevel", "N/A"),
+            members=clan_info.get("memberNum", "N/A"),
+            capacity=clan_info.get("capacity", "N/A")
+        )
+        
+        await message.reply_text(response_text)
+        
+        # Generate and send profile image
+        try:
+            image_url = f"{API_ENDPOINTS['GEN_PROFILE_IMG']}?avatarId={basic_info.get('avatarId', 'default')}&bannerId={basic_info.get('bannerId', 'default')}&pinId={basic_info.get('PinId', 'default')}&uid={uid}&nickname={basic_info.get('nickname', '')}&guildName={clan_info.get('clanName', '')}&level={basic_info.get('level', '')}&isverified=0"
+            
+            async with session.get(image_url) as img_response:
+                if img_response.status == 200:
+                    img_data = await img_response.read()
+                    img_bytes = BytesIO(img_data)
+                    img_bytes.name = "profile.webp"
+                    img_bytes.seek(0)
+                    
+                    await message.reply_document(img_bytes)
+                else:
+                    await message.reply_text("⚠️ ғᴀɪʟᴇᴅ ᴛᴏ ɢᴇɴᴇʀᴀᴛᴇ ᴘʀᴏғɪʟᴇ ɪᴍᴀɢᴇ")
+        except Exception as e:
+            await message.reply_text(f"⚠️ ᴇʀʀᴏʀ ɢᴇɴᴇʀᴀᴛɪɴɢ ᴘʀᴏғɪʟᴇ ɪᴍᴀɢᴇ: {str(e)}")
+            
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+    finally:
+        if loading_msg:
+            await loading_msg.delete()
+
 __MODULE__ = "ꜰʀᴇᴇ ꜰɪʀᴇ"
 __HELP__ = """
 /like [region] [uid] - ɢɪᴠᴇ ʟɪᴋᴇs ᴛᴏ ᴀ ꜰʀᴇᴇ ꜰɪʀᴇ ᴘʀᴏꜰɪʟᴇ
 /banned [uid] - ᴄʜᴇᴄᴋ ɪꜰ ᴀ ꜰʀᴇᴇ ꜰɪʀᴇ ᴜɪᴅ ɪs ʙᴀɴɴᴇᴅ
 /search [name] - sᴇᴀʀᴄʜ ꜰᴏʀ ꜰʀᴇᴇ ꜰɪʀᴇ ᴘʟᴀʏᴇʀs ʙʏ ɴᴀᴍᴇ
 /spamf [region] [uid] - sᴘᴀᴍ ꜰʀɪᴇɴᴅ ʀᴇǫᴜᴇsᴛs ᴛᴏ ᴀ ᴜsᴇʀ
+/tokenstatus - ᴄʜᴇᴄᴋ ᴛʜᴇ sᴛᴀᴛᴜs ᴏғ ᴀʟʟ ʀᴇɢɪᴏɴ ᴛᴏᴋᴇɴs
+/reloadtoken - ʀᴇʟᴏᴀᴅ ᴛᴏᴋᴇɴs ғᴏʀ ᴀʟʟ ʀᴇɢɪᴏɴs
+/get [uid] - ɢᴇᴛ ᴅᴇᴛᴀɪʟᴇᴅ ɪɴғᴏʀᴍᴀᴛɪᴏɴ ᴀʙᴏᴜᴛ ᴀ ᴘʟᴀʏᴇʀ
 ʀᴇɢɪᴏɴs: ɪɴᴅ/ᴇᴜ
 
 ᴇxᴀᴍᴘʟᴇs:
@@ -377,4 +634,7 @@ __HELP__ = """
 • /banned 123456789
 • /search devil
 • /spamf ind 123456789
+• /tokenstatus
+• /reloadtoken
+• /get 123456789
 """ 
