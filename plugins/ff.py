@@ -1,8 +1,118 @@
 import aiohttp
+import json
+import random
+from datetime import datetime, time
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from pyrogram import filters
 from ChampuMusic import app
 from datetime import datetime
 from io import BytesIO
+from urllib.parse import quote
+
+# Initialize scheduler
+scheduler = AsyncIOScheduler()
+scheduler.start()
+
+# Auto tasks file path
+AUTO_TASKS_FILE = "auto_tasks.json"
+
+# Function to load auto tasks
+def load_auto_tasks():
+    try:
+        with open(AUTO_TASKS_FILE, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"auto_like": {}, "auto_spam": {}}
+
+# Function to save auto tasks
+def save_auto_tasks(data):
+    with open(AUTO_TASKS_FILE, 'w') as f:
+        json.dump(data, f, indent=4)
+
+# Function to get random time between 6 AM to 10 AM
+def get_random_time():
+    random_hour = random.randint(6, 9)
+    random_minute = random.randint(0, 59)
+    return time(hour=random_hour, minute=random_minute)
+
+# Schedule daily auto tasks
+async def schedule_daily_tasks():
+    tasks_data = load_auto_tasks()
+    
+    # Schedule auto likes
+    for uid, info in tasks_data["auto_like"].items():
+        scheduler.add_job(
+            auto_like_task,
+            'cron',
+            hour=get_random_time().hour,
+            minute=get_random_time().minute,
+            args=[uid, info["region"], info["user_id"]]
+        )
+    
+    # Schedule auto spam
+    for uid, info in tasks_data["auto_spam"].items():
+        scheduler.add_job(
+            auto_spam_task,
+            'cron',
+            hour=get_random_time().hour,
+            minute=get_random_time().minute,
+            args=[uid, info["region"], info["user_id"]]
+        )
+
+# Auto like task function
+async def auto_like_task(uid, region, user_id):
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{API_ENDPOINTS['GIVE_LIKES']}?uid={uid}&region={region}"
+            async with session.get(url) as response:
+                data = await response.json()
+                
+        likes_data = data.get("likes", {})
+        
+        # Format response message
+        if "error" in likes_data:
+            response_msg = f"❌ ᴀᴜᴛᴏ ʟɪᴋᴇ ғᴀɪʟᴇᴅ ғᴏʀ ᴜɪᴅ {uid}: {likes_data['error']}"
+        else:
+            region_name = REGION_NAMES.get(likes_data["region"], likes_data["region"])
+            response_msg = MESSAGES["SUCCESS"].format(
+                nickname=likes_data["nickname"],
+                region_name=region_name,
+                likes_before="{:,}".format(int(likes_data["likes_before"])),
+                likes_after="{:,}".format(int(likes_data["likes_after"])),
+                likes_given=likes_data["likes_given"]
+            )
+        
+        # Send response to user
+        await app.send_message(user_id, response_msg)
+        
+    except Exception as e:
+        await app.send_message(user_id, f"❌ ᴀᴜᴛᴏ ʟɪᴋᴇ ᴇʀʀᴏʀ ғᴏʀ ᴜɪᴅ {uid}: {str(e)}")
+
+# Auto spam task function
+async def auto_spam_task(uid, region, user_id):
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{API_ENDPOINTS['SPAM_FRIEND']}?uid={uid}&region={region}"
+            async with session.get(url) as response:
+                data = await response.json()
+                
+        spam_info = data.get("spaminfo", {})
+        
+        # Format response message
+        if "error" in spam_info:
+            response_msg = f"❌ ᴀᴜᴛᴏ sᴘᴀᴍ ғᴀɪʟᴇᴅ ғᴏʀ ᴜɪᴅ {uid}: {spam_info['error']}"
+        else:
+            response_msg = MESSAGES["SPAM_SUCCESS"].format(
+                nickname=spam_info["nickname"],
+                region_name=REGION_NAMES.get(spam_info["region"], spam_info["region"]),
+                totalspam=spam_info["totalspam"]
+            )
+        
+        # Send response to user
+        await app.send_message(user_id, response_msg)
+        
+    except Exception as e:
+        await app.send_message(user_id, f"❌ ᴀᴜᴛᴏ sᴘᴀᴍ ᴇʀʀᴏʀ ғᴏʀ ᴜɪᴅ {uid}: {str(e)}")
 
 # API Endpoints
 API_BASE_URL = "https://ff-spy.onrender.com"
@@ -641,7 +751,23 @@ async def get_info(_, message):
         try:
             # Create a new session specifically for image download
             async with aiohttp.ClientSession() as img_session:
-                image_url = f"{API_ENDPOINTS['GEN_PROFILE_IMG']}?avatarId={basic_info.get('avatarId', 'default')}&bannerId={basic_info.get('bannerId', 'default')}&pinId={basic_info.get('PinId', 'default')}&uid={uid}&nickname={basic_info.get('nickname', '')}&guildName={clan_info.get('clanName', '')}&level={basic_info.get('level', '')}&isverified=0"
+                # Get guild name, use empty string if not in a guild
+                guild_name = clan_info.get("clanName", "").strip()
+                
+                # URL encode the parameters to handle special characters
+                from urllib.parse import quote
+                
+                image_url = (
+                    f"{API_ENDPOINTS['GEN_PROFILE_IMG']}"
+                    f"?avatarId={basic_info.get('avatarId', 'default')}"
+                    f"&bannerId={basic_info.get('bannerId', 'default')}"
+                    f"&pinId={basic_info.get('PinId', 'default')}"
+                    f"&uid={uid}"
+                    f"&nickname={quote(basic_info.get('nickname', ''))}"
+                    f"&guildName={quote(guild_name)}"
+                    f"&level={basic_info.get('level', '')}"
+                    f"&isverified=0"
+                )
                 
                 async with img_session.get(image_url) as img_response:
                     if img_response.status == 200:
@@ -662,6 +788,198 @@ async def get_info(_, message):
         if loading_msg:
             await loading_msg.delete()
 
+@app.on_message(filters.command("autolike"))
+async def auto_like(_, message):
+    try:
+        # Split command arguments
+        args = message.text.split()
+        
+        # Check if all required arguments are provided
+        if len(args) != 3:
+            return await message.reply_text("""❌ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ ᴄᴏᴍᴍᴀɴᴅ!
+
+ᴜsᴀɢᴇ: /autolike [region] [uid]
+ʀᴇɢɪᴏɴs: ɪɴᴅ/ᴇᴜ
+ᴇxᴀᴍᴘʟᴇ: /autolike ind 123456789""")
+        
+        # Extract region and UID
+        region = args[1].lower()
+        uid = args[2]
+        
+        # Validate region
+        if region not in ['ind', 'eu']:
+            return await message.reply_text(MESSAGES["INVALID_REGION"])
+        
+        # Load current auto tasks
+        tasks_data = load_auto_tasks()
+        
+        # Add new auto like task
+        tasks_data["auto_like"][uid] = {
+            "region": region,
+            "user_id": message.from_user.id,
+            "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        # Save updated tasks
+        save_auto_tasks(tasks_data)
+        
+        # Schedule the task
+        random_time = get_random_time()
+        scheduler.add_job(
+            auto_like_task,
+            'cron',
+            hour=random_time.hour,
+            minute=random_time.minute,
+            args=[uid, region, message.from_user.id]
+        )
+        
+        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
+
+• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {region.upper()}
+• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
+        
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+
+@app.on_message(filters.command("autospam"))
+async def auto_spam(_, message):
+    try:
+        # Split command arguments
+        args = message.text.split()
+        
+        # Check if all required arguments are provided
+        if len(args) != 3:
+            return await message.reply_text("""❌ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ ᴄᴏᴍᴍᴀɴᴅ!
+
+ᴜsᴀɢᴇ: /autospam [region] [uid]
+ʀᴇɢɪᴏɴs: ɪɴᴅ/ᴇᴜ
+ᴇxᴀᴍᴘʟᴇ: /autospam ind 123456789""")
+        
+        # Extract region and UID
+        region = args[1].lower()
+        uid = args[2]
+        
+        # Validate region
+        if region not in ['ind', 'eu']:
+            return await message.reply_text(MESSAGES["INVALID_REGION"])
+        
+        # Load current auto tasks
+        tasks_data = load_auto_tasks()
+        
+        # Add new auto spam task
+        tasks_data["auto_spam"][uid] = {
+            "region": region,
+            "user_id": message.from_user.id,
+            "added_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        # Save updated tasks
+        save_auto_tasks(tasks_data)
+        
+        # Schedule the task
+        random_time = get_random_time()
+        scheduler.add_job(
+            auto_spam_task,
+            'cron',
+            hour=random_time.hour,
+            minute=random_time.minute,
+            args=[uid, region, message.from_user.id]
+        )
+        
+        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
+
+• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {region.upper()}
+• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
+        
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+
+@app.on_message(filters.command("autotasks"))
+async def list_auto_tasks(_, message):
+    try:
+        # Load current auto tasks
+        tasks_data = load_auto_tasks()
+        
+        # Format auto like tasks
+        auto_like_text = "**ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋs:**\n\n"
+        if tasks_data["auto_like"]:
+            for uid, info in tasks_data["auto_like"].items():
+                if info["user_id"] == message.from_user.id:
+                    auto_like_text += f"""• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {info['region'].upper()}
+• ᴀᴅᴅᴇᴅ: {info['added_at']}\n\n"""
+        else:
+            auto_like_text += "ɴᴏ ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋs\n\n"
+        
+        # Format auto spam tasks
+        auto_spam_text = "**ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋs:**\n\n"
+        if tasks_data["auto_spam"]:
+            for uid, info in tasks_data["auto_spam"].items():
+                if info["user_id"] == message.from_user.id:
+                    auto_spam_text += f"""• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {info['region'].upper()}
+• ᴀᴅᴅᴇᴅ: {info['added_at']}\n\n"""
+        else:
+            auto_spam_text += "ɴᴏ ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋs\n\n"
+        
+        await message.reply_text(f"{auto_like_text}{auto_spam_text}\n**ᴛᴏ ʀᴇᴍᴏᴠᴇ ᴀ ᴛᴀsᴋ, ᴜsᴇ:**\n/removeauto [like/spam] [uid]")
+        
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+
+@app.on_message(filters.command("removeauto"))
+async def remove_auto_task(_, message):
+    try:
+        # Split command arguments
+        args = message.text.split()
+        
+        # Check if all required arguments are provided
+        if len(args) != 3:
+            return await message.reply_text("""❌ ɪɴᴄᴏᴍᴘʟᴇᴛᴇ ᴄᴏᴍᴍᴀɴᴅ!
+
+ᴜsᴀɢᴇ: /removeauto [like/spam] [uid]
+ᴇxᴀᴍᴘʟᴇ: /removeauto like 123456789""")
+        
+        # Extract task type and UID
+        task_type = args[1].lower()
+        uid = args[2]
+        
+        # Validate task type
+        if task_type not in ['like', 'spam']:
+            return await message.reply_text("❌ ɪɴᴠᴀʟɪᴅ ᴛᴀsᴋ ᴛʏᴘᴇ! ᴜsᴇ 'like' ᴏʀ 'spam'")
+        
+        # Load current auto tasks
+        tasks_data = load_auto_tasks()
+        
+        # Get the correct task dictionary
+        task_dict = "auto_like" if task_type == "like" else "auto_spam"
+        
+        # Check if the task exists and belongs to the user
+        if uid in tasks_data[task_dict]:
+            if tasks_data[task_dict][uid]["user_id"] == message.from_user.id:
+                # Remove the task
+                del tasks_data[task_dict][uid]
+                save_auto_tasks(tasks_data)
+                
+                # Remove the scheduled job
+                for job in scheduler.get_jobs():
+                    if job.args and job.args[0] == uid:
+                        job.remove()
+                
+                await message.reply_text(f"✅ ᴀᴜᴛᴏ {task_type} ᴛᴀsᴋ ʀᴇᴍᴏᴠᴇᴅ ғᴏʀ ᴜɪᴅ: {uid}")
+            else:
+                await message.reply_text("❌ ʏᴏᴜ ᴄᴀɴ ᴏɴʟʏ ʀᴇᴍᴏᴠᴇ ʏᴏᴜʀ ᴏᴡɴ ᴛᴀsᴋs!")
+        else:
+            await message.reply_text(f"❌ ɴᴏ ᴀᴜᴛᴏ {task_type} ᴛᴀsᴋ ғᴏᴜɴᴅ ғᴏʀ ᴜɪᴅ: {uid}")
+        
+    except Exception as e:
+        await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
+
+# Schedule initial tasks on startup
+app.on_startup.append(schedule_daily_tasks)
+
 __MODULE__ = "ꜰʀᴇᴇ ꜰɪʀᴇ"
 __HELP__ = """
 /like [region] [uid] - ɢɪᴠᴇ ʟɪᴋᴇs ᴛᴏ ᴀ ꜰʀᴇᴇ ꜰɪʀᴇ ᴘʀᴏꜰɪʟᴇ
@@ -671,6 +989,13 @@ __HELP__ = """
 /tokenstatus - ᴄʜᴇᴄᴋ ᴛʜᴇ sᴛᴀᴛᴜs ᴏғ ᴀʟʟ ʀᴇɢɪᴏɴ ᴛᴏᴋᴇɴs
 /reloadtoken - ʀᴇʟᴏᴀᴅ ᴛᴏᴋᴇɴs ғᴏʀ ᴀʟʟ ʀᴇɢɪᴏɴs
 /get [uid] - ɢᴇᴛ ᴅᴇᴛᴀɪʟᴇᴅ ɪɴғᴏʀᴍᴀᴛɪᴏɴ ᴀʙᴏᴜᴛ ᴀ ᴘʟᴀʏᴇʀ
+
+**ᴀᴜᴛᴏ ᴛᴀsᴋs:**
+/autolike [region] [uid] - ᴀᴅᴅ ᴀ ᴜɪᴅ ᴛᴏ ᴅᴀɪʟʏ ᴀᴜᴛᴏ ʟɪᴋᴇ ʟɪsᴛ
+/autospam [region] [uid] - ᴀᴅᴅ ᴀ ᴜɪᴅ ᴛᴏ ᴅᴀɪʟʏ ᴀᴜᴛᴏ sᴘᴀᴍ ʟɪsᴛ
+/autotasks - ᴠɪᴇᴡ ʏᴏᴜʀ ᴀᴜᴛᴏ ᴛᴀsᴋs ʟɪsᴛ
+/removeauto [like/spam] [uid] - ʀᴇᴍᴏᴠᴇ ᴀ ᴜɪᴅ ғʀᴏᴍ ᴀᴜᴛᴏ ᴛᴀsᴋs
+
 ʀᴇɢɪᴏɴs: ɪɴᴅ/ᴇᴜ
 
 ᴇxᴀᴍᴘʟᴇs:
@@ -681,4 +1006,8 @@ __HELP__ = """
 • /tokenstatus
 • /reloadtoken
 • /get 123456789
+• /autolike ind 123456789
+• /autospam ind 123456789
+• /autotasks
+• /removeauto like 123456789
 """ 
