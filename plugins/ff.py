@@ -978,7 +978,10 @@ async def remove_auto_task(_, message):
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
 
 # Schedule initial tasks on startup
-app.on_start(schedule_daily_tasks)
+@app.on_start()
+async def start_schedule_daily_tasks(client):
+    await schedule_daily_tasks()
+
 
 __MODULE__ = "ꜰʀᴇᴇ ꜰɪʀᴇ"
 __HELP__ = """
