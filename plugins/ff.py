@@ -327,7 +327,7 @@ REGION_NAMES = {
     "EU": "Ɛυʀοƿℯ"
 }
 
-@app.on_message(filters.command("like"))
+@app.on_message(filters.command("like") & (filters.group | filters.private))
 async def give_likes(_, message):
     loading_msg = None
     try:
