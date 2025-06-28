@@ -478,14 +478,17 @@ async def search_players(_, message):
                 from datetime import datetime
                 last_login = datetime.fromtimestamp(player["lastLogin"]).strftime("%d-%m-%Y")
                 
-                result = "╭─────── ᴘʟᴀʏᴇʀ " + str(idx) + " ───────╮\n"
-                result += f"┃ 🆔 ᴜɪᴅ: {player['accountId']}\n"
-                result += f"┃ 👤 ɴᴀᴍᴇ: {player['nickname'].replace('\\t', ' ')}\n"
-                result += f"┃ 🌍 ʀᴇɢɪᴏɴ: {player['region']}\n"
-                result += f"┃ 📊 ʟᴇᴠᴇʟ: {player['level']}\n"
-                result += f"┃ 📅 ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}\n"
-                result += "╰────────────────────╯"
-                formatted_results.append(result)
+                nickname = player["nickname"].replace("\\t", " ")
+                formatted_results.append(
+                    f"""╭─────── ᴘʟᴀʏᴇʀ {idx} ───────╮
+                ┃ 🆔 ᴜɪᴅ: {player["accountId"]}
+                ┃ 👤 ɴᴀᴍᴇ: {nickname}
+                ┃ 🌍 ʀᴇɢɪᴏɴ: {player["region"]}
+                ┃ 📊 ʟᴇᴠᴇʟ: {player["level"]}
+                ┃ 📅 ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}
+                ╰────────────────────╯"""
+                    )
+
             
             result_text = MESSAGES["SEARCH_RESULTS"].format(
                 query=name,
@@ -836,12 +839,11 @@ async def auto_like(_, message):
             args=[uid, region, message.from_user.id]
         )
         
-        response_text = "✅ **ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**\n\n"
-        response_text += f"• ᴜɪᴅ: {uid}\n"
-        response_text += f"• ʀᴇɢɪᴏɴ: {region.upper()}\n"
-        response_text += "• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ"
-        
-        await message.reply_text(response_text)
+        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
+
+• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {region.upper()}
+• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
         
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
@@ -891,12 +893,11 @@ async def auto_spam(_, message):
             args=[uid, region, message.from_user.id]
         )
         
-        response_text = "✅ **ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**\n\n"
-        response_text += f"• ᴜɪᴅ: {uid}\n"
-        response_text += f"• ʀᴇɢɪᴏɴ: {region.upper()}\n"
-        response_text += "• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ"
-        
-        await message.reply_text(response_text)
+        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
+
+• ᴜɪᴅ: {uid}
+• ʀᴇɢɪᴏɴ: {region.upper()}
+• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
         
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
