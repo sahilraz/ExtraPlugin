@@ -837,11 +837,12 @@ async def auto_like(_, message):
             args=[uid, region, message.from_user.id]
         )
         
-        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
-
-• ᴜɪᴅ: {uid}
-• ʀᴇɢɪᴏɴ: {region.upper()}
-• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
+        response_text = "✅ **ᴀᴜᴛᴏ ʟɪᴋᴇ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**\n\n"
+        response_text += f"• ᴜɪᴅ: {uid}\n"
+        response_text += f"• ʀᴇɢɪᴏɴ: {region.upper()}\n"
+        response_text += "• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ"
+        
+        await message.reply_text(response_text)
         
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
@@ -891,11 +892,12 @@ async def auto_spam(_, message):
             args=[uid, region, message.from_user.id]
         )
         
-        await message.reply_text(f"""✅ **ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**
-
-• ᴜɪᴅ: {uid}
-• ʀᴇɢɪᴏɴ: {region.upper()}
-• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ""")
+        response_text = "✅ **ᴀᴜᴛᴏ sᴘᴀᴍ ᴛᴀsᴋ ᴀᴅᴅᴇᴅ**\n\n"
+        response_text += f"• ᴜɪᴅ: {uid}\n"
+        response_text += f"• ʀᴇɢɪᴏɴ: {region.upper()}\n"
+        response_text += "• sᴄʜᴇᴅᴜʟᴇᴅ: ᴅᴀɪʟʏ ᴀᴛ ʀᴀɴᴅᴏᴍ ᴛɪᴍᴇ ʙᴇᴛᴡᴇᴇɴ 6 ᴀᴍ - 10 ᴀᴍ"
+        
+        await message.reply_text(response_text)
         
     except Exception as e:
         await message.reply_text(f"❌ ᴀɴ ᴇʀʀᴏʀ ᴏᴄᴄᴜʀʀᴇᴅ: {str(e)}")
