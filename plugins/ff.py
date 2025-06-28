@@ -37,27 +37,31 @@ def get_random_time():
 
 # Schedule daily auto tasks
 async def schedule_daily_tasks():
-    tasks_data = load_auto_tasks()
-    
-    # Schedule auto likes
-    for uid, info in tasks_data["auto_like"].items():
-        scheduler.add_job(
-            auto_like_task,
-            'cron',
-            hour=get_random_time().hour,
-            minute=get_random_time().minute,
-            args=[uid, info["region"], info["user_id"]]
-        )
-    
-    # Schedule auto spam
-    for uid, info in tasks_data["auto_spam"].items():
-        scheduler.add_job(
-            auto_spam_task,
-            'cron',
-            hour=get_random_time().hour,
-            minute=get_random_time().minute,
-            args=[uid, info["region"], info["user_id"]]
-        )
+    tasks_data = load_auto_tasks()
+
+    ist = timezone('Asia/Kolkata')
+
+    # Schedule auto likes
+    for uid, info in tasks_data["auto_like"].items():
+        scheduler.add_job(
+            auto_like_task,
+            'cron',
+            hour=6,
+            minute=0,
+            args=[uid, info["region"], info["user_id"]],
+            timezone=ist
+        )
+
+    # Schedule auto spam
+    for uid, info in tasks_data["auto_spam"].items():
+        scheduler.add_job(
+            auto_spam_task,
+            'cron',
+            hour=6,
+            minute=0,
+            args=[uid, info["region"], info["user_id"]],
+            timezone=ist
+        )
 
 # Auto like task function
 async def auto_like_task(uid, region, user_id):
