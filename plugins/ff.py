@@ -478,15 +478,14 @@ async def search_players(_, message):
                 from datetime import datetime
                 last_login = datetime.fromtimestamp(player["lastLogin"]).strftime("%d-%m-%Y")
                 
-                formatted_results.append(
-                    f"""╭─────── ᴘʟᴀʏᴇʀ {idx} ───────╮
-┃ 🆔 ᴜɪᴅ: {player["accountId"]}
-┃ 👤 ɴᴀᴍᴇ: {player["nickname"].replace("\\t", " ")}
-┃ 🌍 ʀᴇɢɪᴏɴ: {player["region"]}
-┃ 📊 ʟᴇᴠᴇʟ: {player["level"]}
-┃ 📅 ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}
-╰────────────────────╯"""
-                )
+                result = "╭─────── ᴘʟᴀʏᴇʀ " + str(idx) + " ───────╮\n"
+                result += f"┃ 🆔 ᴜɪᴅ: {player['accountId']}\n"
+                result += f"┃ 👤 ɴᴀᴍᴇ: {player['nickname'].replace('\\t', ' ')}\n"
+                result += f"┃ 🌍 ʀᴇɢɪᴏɴ: {player['region']}\n"
+                result += f"┃ 📊 ʟᴇᴠᴇʟ: {player['level']}\n"
+                result += f"┃ �� ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}\n"
+                result += "╰────────────────────╯"
+                formatted_results.append(result)
             
             result_text = MESSAGES["SEARCH_RESULTS"].format(
                 query=name,
