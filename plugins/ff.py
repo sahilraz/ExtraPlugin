@@ -483,7 +483,7 @@ async def search_players(_, message):
                 result += f"┃ 👤 ɴᴀᴍᴇ: {player['nickname'].replace('\\t', ' ')}\n"
                 result += f"┃ 🌍 ʀᴇɢɪᴏɴ: {player['region']}\n"
                 result += f"┃ 📊 ʟᴇᴠᴇʟ: {player['level']}\n"
-                result += f"┃ �� ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}\n"
+                result += f"┃ 📅 ʟᴀsᴛ ʟᴏɢɪɴ: {last_login}\n"
                 result += "╰────────────────────╯"
                 formatted_results.append(result)
             
